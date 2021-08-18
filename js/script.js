@@ -6,6 +6,7 @@ const remainingGuesses = document.querySelector(".remaining");
 const remainingGuessesSpan = document.querySelector(".remaining span");
 const message = document.querySelector(".message");
 const playAgainButton = document.querySelector(".play-again");
+const guessedLettersElement = document.querySelector(".guessed-letters");
 
 const word = "magnolia";
 // Array will contain all of the letters users guess
@@ -70,12 +71,57 @@ const validateGuess = function (input) {
 const makeGuess = function (guess) {
   // Makes all letters uppercase
   guess = guess.toUpperCase();
-  // Checks to see if guessedLetters array already contains the letter
+  // Checks to see if 'guessedLetters' array already contains the letter
   if (guessedLetters.includes(guess)) {
     message.innerText = "You've already guessed that letter! Try again."
   } else {
     //If letter is not in array, will push to array
     guessedLetters.push(guess);
     console.log(guessedLetters);
+    showGuessedLetters();
+  }
+  updateWordInProgress(guessedLetters);
+};
+
+// Function to update the page with guessed guessedLetters
+const showGuessedLetters = function () {
+  // Clear the list first
+  guessedLettersElement.innerHTML = "";
+  // Create a new list item for each letter of 'guessedLetters' array and add it to the unordered list
+  for (const letter of guessedLetters) {
+    const li = document.createElement("li");
+    li.innerText = letter;
+    guessedLettersElement.append(li);
+  }
+};
+
+// Function to replace circle symbols with correctly guessed letters
+const updateWordInProgress = function (guessedLetters) {
+  // Changes 'word' variable to uppercase
+  const wordUpper = word.toUpperCase();
+  // Splits the 'word' string into an array so letter can appear in the 'guessedLetters' array
+  const wordArray = wordUpper.split("");
+  // New array for updated characters
+  const revealWord = [];
+  // Check to see if 'wordArray' contains any letters from 'guessedLetters' array
+  for (const letter of wordArray) {
+    // If it does contain any of the letters, update circle symbol with the correct letter
+    if (guessedLetters.includes(letter)) {
+      revealWord.push(letter.toUpperCase());
+    } else {
+    // If letter is not in array, display circle
+    revealWord.push("●");
+  }
+}
+  // Update 'wordAppear' paragraph with joined letters
+  wordAppear.innerText = revealWord.join("");
+  checkIfWon();
+};
+
+// Function to check if player won
+const checkIfWon = function () {
+  if (word.toUpperCase() === wordAppear.innerText) {
+    message.classList.add("win");
+    message.innerHTML = `<p class="highlight">You guessed the correct word! Congrats!</p>`;
   }
 };
